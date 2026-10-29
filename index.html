@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>คำนวณส่วนลด &amp; กำไร</title>
+<style>
+:root{--bg:#eef0f0;--card:#fbfaf9;--text:#515e5d;--muted:#6a7776;--line:#dfd1c9;--sky:#8fa8aa;--accent:#b89983;--accent-text:#2b3433;--good:#3f7d62;--bad:#b5524a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#263130;--card:#2f3b3a;--text:#eeeeee;--muted:#a9bcbd;--line:#435250;--sky:#8fa8aa;--accent:#b89983;--accent-text:#1f2726;--good:#8fd4b2;--bad:#eb9f97;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#263130;--card:#2f3b3a;--text:#eeeeee;--muted:#a9bcbd;--line:#435250;--sky:#8fa8aa;--accent:#b89983;--accent-text:#1f2726;--good:#8fd4b2;--bad:#eb9f97;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Sarabun","Noto Sans Thai",system-ui,sans-serif;font-size:16px;line-height:1.4}
+main{max-width:480px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+label{display:block;font-size:14px;color:var(--muted);margin:10px 0 4px}
+label:first-child{margin-top:0}
+input{width:100%;font-size:18px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+.row{display:flex;gap:8px}
+.row input{flex:1;min-width:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+.seg button{border:0;background:var(--bg);color:var(--text);font-size:16px;padding:0 16px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--accent-text);font-weight:700}
+.hero{text-align:center;padding:18px 14px}
+.hero small{color:var(--muted);font-size:14px}
+.hero .big{font-size:34px;font-weight:700;margin-top:2px}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cell{background:var(--bg);border-radius:10px;padding:10px}
+.cell small{display:block;color:var(--muted);font-size:13px}
+.cell b{font-size:18px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.reset{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:16px}
+[hidden]{display:none!important}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:16px;cursor:pointer}
+.tabs button.on{background:var(--accent);color:var(--accent-text);font-weight:700;border-color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}
+.tbl th{color:var(--muted);font-weight:400;font-size:13px}
+.tbl th,.tbl td{padding:8px 4px;text-align:right;border-bottom:1px solid var(--line)}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl tr:last-child td{border-bottom:0}
+.fml{margin-top:12px}
+.fi{border-left:3px solid var(--accent);padding:6px 10px;margin-bottom:10px;background:var(--bg);border-radius:0 10px 10px 0}
+.fi b,.fi span,.fi em{display:block}
+.fi b{font-size:14px}
+.fi span{font-size:15px;margin:2px 0}
+.fi em{font-size:13px;color:var(--muted);font-style:normal}
+.seg button small{display:block;font-size:12px;font-weight:400;margin-top:2px;opacity:.8}
+.seg button.on small{opacity:1}
+.card.hero{border:2px solid var(--sky)}
+.cell{border-left:3px solid var(--sky)}
+body.pb{--bg:#f0e6d7;--card:#fbf8f2;--text:#4a4b33;--muted:#67684a;--line:#c2cfdc;--sky:#95a4ca;--accent:#f3aba7;--accent-text:#4a2b2a;--good:#5b7a3d;--bad:#b5524a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.pb{--bg:#2a2c1f;--card:#353826;--text:#f0e6d7;--muted:#c2cfdc;--line:#4b4e37;--sky:#95a4ca;--accent:#f3aba7;--accent-text:#2a2c1f;--good:#b7d98a;--bad:#ff9d94}}
+:root[data-theme="dark"] body.pb{--bg:#2a2c1f;--card:#353826;--text:#f0e6d7;--muted:#c2cfdc;--line:#4b4e37;--sky:#95a4ca;--accent:#f3aba7;--accent-text:#2a2c1f;--good:#b7d98a;--bad:#ff9d94}
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:8px}
+.top h1{grid-column:2;text-align:center}
+.by{grid-column:3;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><h1>Pricing</h1><span class="by">By. Tonglaong</span></header>
+<div class="tabs"><button id="tA" class="on" type="button">Discount</button><button id="tB" type="button">Profit</button></div>
+<div id="pA">
+
+<div class="card">
+<label for="cost">ราคาทุน ต่อชิ้น (฿)</label>
+<input id="cost" type="text" inputmode="decimal" placeholder="0">
+<label for="price">ราคาขายก่อนลด ต่อชิ้น (฿)</label>
+<input id="price" type="text" inputmode="decimal" placeholder="0">
+<label for="disc">ส่วนลด</label>
+<div class="row">
+<input id="disc" type="text" inputmode="decimal" placeholder="0">
+<div class="seg"><button id="mPct" class="on" type="button">%</button><button id="mBaht" type="button">฿</button></div>
+</div>
+<label for="qty">จำนวน (ชิ้น)</label>
+<input id="qty" type="text" inputmode="numeric" value="1">
+</div>
+
+<div class="card hero">
+<small>กำไรรวม</small>
+<div class="big" id="total">0.00</div>
+</div>
+
+<div class="card">
+<div class="grid">
+<div class="cell"><small>ราคาขายหลังลด/ชิ้น</small><b id="net">0.00</b></div>
+<div class="cell"><small>กำไร/ชิ้น</small><b id="unit">0.00</b></div>
+<div class="cell"><small>กำไรขั้นต้น (Margin)</small><b id="margin">0.00%</b></div>
+<div class="cell"><small>มาร์กอัพ (Markup)</small><b id="markup">0.00%</b></div>
+<div class="cell"><small>ยอดขายรวม</small><b id="sales">0.00</b></div>
+<div class="cell"><small>ส่วนลดสูงสุดที่ไม่ขาดทุน</small><b id="maxd">0.00%</b></div>
+</div>
+<p class="note">Margin = กำไร ÷ ราคาขาย · Markup = กำไร ÷ ราคาทุน · ยังไม่รวม VAT และค่าใช้จ่ายอื่น</p>
+</div>
+
+<button class="reset" id="reset" type="button">ล้างข้อมูล</button>
+</div>
+
+<div id="pB" hidden>
+<div class="card">
+<label for="cost2">ราคาทุน ต่อชิ้น (฿)</label>
+<input id="cost2" type="text" inputmode="decimal" placeholder="0">
+<label for="pct2">กำไรที่ต้องการ</label>
+<div class="row">
+<input id="pct2" type="text" inputmode="decimal" placeholder="0">
+<div class="seg"><button id="b2Markup" type="button">% ของทุน<small>Note: การคิดราคาง่ายๆ</small></button><button id="b2Margin" class="on" type="button">% ของราคาขาย<small>Note: Quotation</small></button></div>
+</div>
+<label for="qty2">จำนวน (ชิ้น)</label>
+<input id="qty2" type="text" inputmode="numeric" value="1">
+</div>
+
+<div class="card hero">
+<small>ราคาขายที่ควรตั้ง ต่อชิ้น</small>
+<div class="big" id="price2">0.00</div>
+</div>
+
+<div class="card">
+<div class="grid">
+<div class="cell"><small>กำไร/ชิ้น</small><b id="unit2" class="good">0.00</b></div>
+<div class="cell"><small>กำไรรวม</small><b id="total2" class="good">0.00</b></div>
+<div class="cell"><small>ยอดขายรวม</small><b id="sales2">0.00</b></div>
+<div class="cell"><small>ต้นทุนรวม</small><b id="costs2">0.00</b></div>
+</div>
+<div class="fml">
+<div class="fi"><b>% ของทุน (Markup)</b><span>ราคาขาย = ทุน × (1 + %)</span></div>
+<div class="fi"><b>% ของราคาขาย (Margin)</b><span>ราคาขาย = ทุน ÷ (1 − %)</span></div>
+</div>
+</div>
+
+<div class="card">
+<table class="tbl"><thead><tr><th>กำไร</th><th>ราคาขาย</th><th>กำไร/ชิ้น</th></tr></thead><tbody id="tbody2"></tbody></table>
+</div>
+
+<button class="reset" id="reset2" type="button">ล้างข้อมูล</button>
+</div>
+</main>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var mode='pct';
+function num(id){var v=parseFloat(String($(id).value).replace(/,/g,''));return isNaN(v)?0:v}
+function f(n){return n.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function sign(el,v){el.classList.toggle('good',v>0);el.classList.toggle('bad',v<0)}
+function calc(){
+var cost=num('cost'),price=num('price'),d=num('disc'),q=Math.max(1,Math.floor(num('qty'))||1);
+var off=mode==='pct'?price*d/100:d;
+var net=Math.max(0,price-off);
+var unit=net-cost,total=unit*q;
+var margin=net>0?unit/net*100:0;
+var markup=cost>0?unit/cost*100:0;
+var maxd=price>0?Math.max(0,(price-cost)/price*100):0;
+$('net').textContent=f(net);
+$('unit').textContent=f(unit);
+$('total').textContent=f(total);
+$('margin').textContent=f(margin)+'%';
+$('markup').textContent=f(markup)+'%';
+$('sales').textContent=f(net*q);
+$('maxd').textContent=f(maxd)+'%';
+sign($('total'),total);sign($('unit'),unit);sign($('margin'),margin);
+}
+['cost','price','disc','qty'].forEach(function(i){$(i).addEventListener('input',calc)});
+function setMode(m){mode=m;$('mPct').classList.toggle('on',m==='pct');$('mBaht').classList.toggle('on',m==='baht');calc()}
+$('mPct').onclick=function(){setMode('pct')};
+$('mBaht').onclick=function(){setMode('baht')};
+$('reset').onclick=function(){['cost','price','disc'].forEach(function(i){$(i).value=''});$('qty').value='1';setMode('pct')};
+calc();
+
+/* หน้าคิดกำไร */
+var bm='margin';
+function price2(c,p){
+if(bm==='markup')return c*(1+p/100);
+return p<100?c/(1-p/100):0;
+}
+function calc2(){
+var c=num('cost2'),p=num('pct2'),q=Math.max(1,Math.floor(num('qty2'))||1);
+var pr=price2(c,p),u=pr-c;
+$('price2').textContent=f(pr);
+$('unit2').textContent=f(u);
+$('total2').textContent=f(u*q);
+$('sales2').textContent=f(pr*q);
+$('costs2').textContent=f(c*q);
+var h='';
+[5,10,15,20,25,30,40,50].forEach(function(x){
+var r=price2(c,x);
+h+='<tr><td>'+x+'%</td><td>'+f(r)+'</td><td>'+f(r-c)+'</td></tr>';
+});
+$('tbody2').innerHTML=h;
+}
+['cost2','pct2','qty2'].forEach(function(i){$(i).addEventListener('input',calc2)});
+function setB(m){bm=m;$('b2Markup').classList.toggle('on',m==='markup');$('b2Margin').classList.toggle('on',m==='margin');calc2()}
+$('b2Markup').onclick=function(){setB('markup')};
+$('b2Margin').onclick=function(){setB('margin')};
+$('reset2').onclick=function(){['cost2','pct2'].forEach(function(i){$(i).value=''});$('qty2').value='1';setB('margin')};
+calc2();
+
+function tab(t){
+$('pA').hidden=t!=='A';$('pB').hidden=t!=='B';
+document.body.classList.toggle('pb',t==='B');
+$('tA').classList.toggle('on',t==='A');$('tB').classList.toggle('on',t==='B');
+}
+$('tA').onclick=function(){tab('A')};
+$('tB').onclick=function(){tab('B')};
+})();
+</script>
+</body>
+</html>
