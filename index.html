@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<link rel="apple-touch-icon" href="Icon.jpg">
-<link rel="icon" type="image/jpeg" href="Icon.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -75,7 +73,7 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-acti
 <body>
 <main>
 <header class="top"><h1>Pricing</h1><span class="by">By. Tonglaong</span></header>
-<div class="tabs"><button id="tA" class="on" type="button">Discount</button><button id="tB" type="button">Profit</button></div>
+<div class="tabs"><button id="tA" class="on" type="button">Discount</button><button id="tB" type="button">Profit</button><button id="tC" type="button">Change</button></div>
 <div id="pA">
 
 <div class="card">
@@ -149,6 +147,41 @@ body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-acti
 
 <button class="reset" id="reset2" type="button">ล้างข้อมูล</button>
 </div>
+<div id="pC" hidden>
+<div class="card">
+<label for="old3">ค่าเดิม</label>
+<input id="old3" type="text" inputmode="decimal" placeholder="0">
+<label for="new3">ค่าใหม่</label>
+<input id="new3" type="text" inputmode="decimal" placeholder="0">
+</div>
+
+<div class="card hero">
+<small id="lab3">เปลี่ยนแปลง</small>
+<div class="big" id="pct3">0.00%</div>
+</div>
+
+<div class="card">
+<div class="grid">
+<div class="cell"><small>ผลต่าง (ใหม่ − เดิม)</small><b id="diff3">0.00</b></div>
+<div class="cell"><small>ใหม่ ÷ เดิม (เท่า)</small><b id="ratio3">0.00</b></div>
+</div>
+<p class="note">% เปลี่ยนแปลง = (ค่าใหม่ − ค่าเดิม) ÷ ค่าเดิม × 100</p>
+</div>
+
+<div class="card">
+<label for="adj3">ปรับค่าเดิมด้วย %</label>
+<div class="row">
+<input id="adj3" type="text" inputmode="decimal" placeholder="0">
+<div class="seg"><button id="aInc" class="on" type="button">+ เพิ่ม</button><button id="aDec" type="button">− ลด</button></div>
+</div>
+<div class="grid" style="margin-top:12px">
+<div class="cell"><small>ค่าใหม่</small><b id="adjres3">0.00</b></div>
+<div class="cell"><small>เปลี่ยนไป</small><b id="adjdiff3">0.00</b></div>
+</div>
+</div>
+
+<button class="reset" id="reset3" type="button">ล้างข้อมูล</button>
+</div>
 </main>
 
 <script>
@@ -211,13 +244,39 @@ $('reset2').onclick=function(){['cost2','pct2'].forEach(function(i){$(i).value='
 calc2();
 
 function tab(t){
-$('pA').hidden=t!=='A';$('pB').hidden=t!=='B';
+$('pA').hidden=t!=='A';$('pB').hidden=t!=='B';$('pC').hidden=t!=='C';
 document.body.classList.toggle('pb',t==='B');
-$('tA').classList.toggle('on',t==='A');$('tB').classList.toggle('on',t==='B');
+$('tA').classList.toggle('on',t==='A');$('tB').classList.toggle('on',t==='B');$('tC').classList.toggle('on',t==='C');
 }
 $('tA').onclick=function(){tab('A')};
 try{var cv=document.createElement('canvas');cv.width=cv.height=180;var cx=cv.getContext('2d');cx.fillStyle='#b89983';cx.fillRect(0,0,180,180);cx.fillStyle='#2b3433';cx.font='bold 88px -apple-system,sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('฿%',90,96);var ic=document.createElement('link');ic.rel='apple-touch-icon';ic.href=cv.toDataURL('image/png');document.head.appendChild(ic)}catch(e){}
 $('tB').onclick=function(){tab('B')};
+$('tC').onclick=function(){tab('C')};
+
+/* Change page */
+var am='inc';
+function calc3(){
+var o=num('old3'),n=num('new3'),d=n-o;
+var p=o!==0?d/Math.abs(o)*100:0;
+if(o===0&&n!==0){
+$('pct3').textContent='—';$('lab3').textContent='คำนวณ % ไม่ได้ (ค่าเดิมเป็น 0)';sign($('pct3'),0);
+}else{
+$('pct3').textContent=(p>0?'▲ +':p<0?'▼ −':'')+f(Math.abs(p))+'%';
+$('lab3').textContent=p>0?'เพิ่มขึ้น':p<0?'ลดลง':'ไม่เปลี่ยนแปลง';
+sign($('pct3'),p);
+}
+$('diff3').textContent=f(d);sign($('diff3'),d);
+$('ratio3').textContent=o!==0?f(n/o):'0.00';
+var a=num('adj3'),r=am==='inc'?o*(1+a/100):o*(1-a/100);
+$('adjres3').textContent=f(r);
+$('adjdiff3').textContent=f(r-o);
+}
+['old3','new3','adj3'].forEach(function(i){$(i).addEventListener('input',calc3)});
+function setA(m){am=m;$('aInc').classList.toggle('on',m==='inc');$('aDec').classList.toggle('on',m==='dec');calc3()}
+$('aInc').onclick=function(){setA('inc')};
+$('aDec').onclick=function(){setA('dec')};
+$('reset3').onclick=function(){['old3','new3','adj3'].forEach(function(i){$(i).value=''});setA('inc')};
+calc3();
 })();
 </script>
 </body>
