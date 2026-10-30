@@ -2,9 +2,14 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="apple-touch-icon" href="Icon.jpg">
-<link rel="icon" type="image/jpeg" href="Icon.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pricing">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#eef0f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#263130" media="(prefers-color-scheme: dark)">
 <title>คำนวณส่วนลด &amp; กำไร</title>
 <style>
 :root{--bg:#eef0f0;--card:#fbfaf9;--text:#515e5d;--muted:#6a7776;--line:#dfd1c9;--sky:#8fa8aa;--accent:#b89983;--accent-text:#2b3433;--good:#3f7d62;--bad:#b5524a;
@@ -61,6 +66,8 @@ body.pb{--bg:#f0e6d7;--card:#fbf8f2;--text:#4a4b33;--muted:#67684a;--line:#c2cfd
 .top{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:8px}
 .top h1{grid-column:2;text-align:center}
 .by{grid-column:3;text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
+html{-webkit-text-size-adjust:100%}
+body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 </style>
 </head>
 <body>
@@ -207,6 +214,7 @@ document.body.classList.toggle('pb',t==='B');
 $('tA').classList.toggle('on',t==='A');$('tB').classList.toggle('on',t==='B');
 }
 $('tA').onclick=function(){tab('A')};
+try{var cv=document.createElement('canvas');cv.width=cv.height=180;var cx=cv.getContext('2d');cx.fillStyle='#b89983';cx.fillRect(0,0,180,180);cx.fillStyle='#2b3433';cx.font='bold 88px -apple-system,sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('฿%',90,96);var ic=document.createElement('link');ic.rel='apple-touch-icon';ic.href=cv.toDataURL('image/png');document.head.appendChild(ic)}catch(e){}
 $('tB').onclick=function(){tab('B')};
 })();
 </script>
